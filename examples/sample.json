@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "cards": {
+    "1": {"front": "HTTP 200 表示什么？", "back": "请求成功", "tags": ["网络"], "created": "2025-01-01", "due": "2025-01-01", "interval": 0, "difficulty": 0.5, "reviews": 0, "last_rating": null}
+  }
+}
