@@ -57,7 +57,7 @@ studydeck --data ./deck.json stats
 
 ## 数据格式、隐私与安全
 
-JSON 顶层包含 `version` 和 `cards` 对象；卡片字段包括 `front`、`back`、`tags`、`created`、`due`、`interval`、`difficulty`、`reviews`、`last_rating`，复习后还会有 `last_review`。`examples/sample.json` 是无个人数据示例。数据只写入你指定的本地路径；本程序不联网、不上传、不读取凭据。请自行设置文件权限并备份；程序不提供加密，敏感内容不应放入卡片。损坏 JSON 会报错而不会覆盖原文件。
+JSON 顶层包含 `version` 和 `cards` 对象；卡片字段包括 `front`、`back`、`tags`、`created`、`due`、`interval`、`difficulty`、`reviews`、`last_rating`，复习后还会有 `last_review`。`examples/sample.json` 是无个人数据示例。数据只写入你指定的本地路径；本程序不联网、不上传、不读取凭据。请自行设置文件权限并备份；程序不提供加密，敏感内容不应放入卡片。程序读取时会校验卡片字段类型、日期、间隔、难度和评分范围；损坏或结构异常的 JSON 会报错而不会覆盖原文件。
 
 ## 开发与测试
 

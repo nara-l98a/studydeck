@@ -17,6 +17,36 @@ def load_data(path: Path) -> dict[str, Any]:
         raise ValueError(f"无法读取数据文件：{exc}") from exc
     if not isinstance(obj, dict) or not isinstance(obj.get("cards", {}), dict):
         raise ValueError("数据文件格式无效：cards 必须是对象")
+    for cid, card in obj["cards"].items():
+        if not isinstance(card, dict):
+            raise ValueError(f"数据文件格式无效：卡片 {cid} 必须是对象")
+        for field in ("front", "back"):
+            if field in card and not isinstance(card[field], str):
+                raise ValueError(f"数据文件格式无效：卡片 {cid} 的 {field} 必须是文本")
+        if "tags" in card and (not isinstance(card["tags"], list)
+                                or not all(isinstance(tag, str) for tag in card["tags"])):
+            raise ValueError(f"数据文件格式无效：卡片 {cid} 的 tags 必须是文本数组")
+        if "due" in card:
+            try:
+                date.fromisoformat(card["due"])
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"数据文件格式无效：卡片 {cid} 的 due 必须是 YYYY-MM-DD 日期") from exc
+        if "interval" in card and (isinstance(card["interval"], bool)
+                                    or not isinstance(card["interval"], (int, float))
+                                    or card["interval"] < 0):
+            raise ValueError(f"数据文件格式无效：卡片 {cid} 的 interval 必须是非负数字")
+        if "difficulty" in card and (isinstance(card["difficulty"], bool)
+                                      or not isinstance(card["difficulty"], (int, float))
+                                      or not 0 <= card["difficulty"] <= 1):
+            raise ValueError(f"数据文件格式无效：卡片 {cid} 的 difficulty 必须在 0 到 1 之间")
+        if "reviews" in card and (isinstance(card["reviews"], bool)
+                                   or not isinstance(card["reviews"], int)
+                                   or card["reviews"] < 0):
+            raise ValueError(f"数据文件格式无效：卡片 {cid} 的 reviews 必须是非负整数")
+        if "last_rating" in card and card["last_rating"] is not None and (
+                isinstance(card["last_rating"], bool) or not isinstance(card["last_rating"], int)
+                or not 0 <= card["last_rating"] <= 5):
+            raise ValueError(f"数据文件格式无效：卡片 {cid} 的 last_rating 必须是 0 到 5 的整数或 null")
     return obj
 
 def save_data(path: Path, data: dict[str, Any]) -> None:

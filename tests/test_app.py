@@ -39,4 +39,13 @@ class StudyDeckTests(unittest.TestCase):
             _,stats,_=self.run_cli(p,"stats")
             self.assertIn("复习次数：3",stats)
             self.assertIn("最近评分均值：3.00",stats)
+    def test_malformed_card_is_reported_without_overwriting_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"cards.json"
+            p.write_text(json.dumps({"version": 1, "cards": {"1": {"front": "a", "back": "b", "difficulty": "hard"}}}), encoding="utf-8")
+            original = p.read_text(encoding="utf-8")
+            code,_,err=self.run_cli(p,"list")
+            self.assertEqual(code,2)
+            self.assertIn("difficulty",err)
+            self.assertEqual(p.read_text(encoding="utf-8"), original)
 if __name__ == "__main__": unittest.main()
